@@ -19,6 +19,11 @@ public class MoviesController : ControllerBase
 	[HttpPost]
 	public IActionResult AddMovie([FromBody] Movie m)
 	{
+		if (ModelState.IsValid == false)
+		{
+			return BadRequest(ModelState);
+		}
+		
 		var enumerable = _movies.Append(m);
 		
 		_movies = enumerable;
