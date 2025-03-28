@@ -17,10 +17,12 @@ public class MoviesController : ControllerBase
 	}
 	
 	[HttpPost]
-	public void AddMovie([FromBody] Movie m)
+	public IActionResult AddMovie([FromBody] Movie m)
 	{
 		var enumerable = _movies.Append(m);
 		
 		_movies = enumerable;
+		
+		return Created($"api/movies/{m.Title}", m);
 	}
 }
