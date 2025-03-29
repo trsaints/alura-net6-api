@@ -6,6 +6,8 @@ namespace MoviesApi.Data.Models;
 
 public class Movie
 {
+	public uint Id { get; set; }
+	
 	[Required]
 	[MaxLength(128)]
 	public string? Title { get; set; }
