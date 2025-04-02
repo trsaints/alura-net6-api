@@ -6,6 +6,8 @@ namespace MoviesApi.Data.Models;
 
 public class Movie
 {
+	[Key]
+	[Required]
 	public uint Id { get; set; }
 	
 	[Required]
