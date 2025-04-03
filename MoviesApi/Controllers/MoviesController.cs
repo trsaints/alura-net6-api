@@ -1,4 +1,7 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using MoviesApi.Data.Context;
+using MoviesApi.Data.Dtos;
 using MoviesApi.Data.Models;
 
 
@@ -9,18 +12,25 @@ namespace MoviesApi.Controllers;
 [Route("api/[controller]")]
 public class MoviesController : ControllerBase
 {
-	private static IEnumerable<Movie> _movies = new List<Movie>();
+	private readonly MoviesContext _moviesContext;
+	private readonly IMapper       _mapper;
+	
+	public MoviesController(MoviesContext moviesContext, IMapper mapper)
+	{
+		_moviesContext = moviesContext;
+		_mapper   = mapper;
+	}
 
 	[HttpGet]
 	public IActionResult GetMovies([FromQuery] uint skip = 0, [FromQuery] uint take = 50)
 	{
-		return Ok(_movies.Skip((int)skip).Take((int)take));
+		return Ok(_moviesContext.Movies.Skip((int)skip).Take((int)take).OrderBy(m => m.Title));
 	}
 
 	[HttpGet("{id}")]
 	public IActionResult GetById(uint id)
 	{
-		var movie = _movies.FirstOrDefault(m => m.Id == id);
+		var movie = _moviesContext.Movies.FirstOrDefault(m => m.Id == id);
 
 		if (movie == null)
 		{
@@ -31,17 +41,18 @@ public class MoviesController : ControllerBase
 	}
 
 	[HttpPost]
-	public IActionResult AddMovie([FromBody] Movie m)
+	public IActionResult AddMovie([FromBody] CreateMovieDto dto)
 	{
+		var movie = _mapper.Map<Movie>(dto);
+		
 		if (ModelState.IsValid == false)
 		{
 			return BadRequest(ModelState);
 		}
 
-		var enumerable = _movies.Append(m);
+		_moviesContext.Movies.Add(movie);
+		_moviesContext.SaveChanges();
 
-		_movies = enumerable;
-
-		return Created($"api/movies/{m.Id}", m);
+		return Created($"api/movies/{movie.Id}", dto);
 	}
 }

@@ -10,6 +10,9 @@ builder.Services.AddDbContext<MoviesContext>(options =>
         new MySqlServerVersion(new Version(9, 2, 0)));
 });
 
+// Configure automapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 // Add services to the container.
 
 builder.Services.AddControllers();
