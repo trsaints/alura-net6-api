@@ -55,4 +55,21 @@ public class MoviesController : ControllerBase
 
 		return Created($"api/movies/{movie.Id}", dto);
 	}
+
+	[HttpPut("{id}")]
+	public IActionResult UpdateMovie(uint id,
+	                                 [FromBody] UpdateMovieDto newDto)
+	{
+		var movie = _moviesContext.Movies.FirstOrDefault(m => m.Id == id);
+		
+		if (movie == null)
+		{
+			return NotFound();
+		}
+		
+		_mapper.Map(newDto, movie);
+		_moviesContext.SaveChanges();
+		
+		return NoContent();
+	}
 }
