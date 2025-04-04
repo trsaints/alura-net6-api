@@ -26,9 +26,14 @@ public class MoviesController : ControllerBase
 	public IActionResult
 		GetMovies([FromQuery] uint skip = 0, [FromQuery] uint take = 50)
 	{
-		return Ok(_moviesContext.Movies.Skip((int)skip)
-		                        .Take((int)take)
-		                        .OrderBy(m => m.Title));
+		var dtos = _mapper.Map<List<ReadMovieDto>>(_moviesContext.Movies
+			                                           .Skip((int)skip)
+			                                           .Take((int)take)
+			                                           .OrderBy(m => m.Title));
+
+		return Ok(dtos.Skip((int)skip)
+		              .Take((int)take)
+		              .OrderBy(m => m.Title));
 	}
 
 	[HttpGet("{id}")]
@@ -41,7 +46,9 @@ public class MoviesController : ControllerBase
 			return NotFound();
 		}
 
-		return Ok(movie);
+		var dto = _mapper.Map<ReadMovieDto>(movie);
+
+		return Ok(dto);
 	}
 
 	[HttpPost]
@@ -79,7 +86,8 @@ public class MoviesController : ControllerBase
 
 	[HttpPatch("{id}")]
 	public IActionResult PatchMovie(uint id,
-	                                JsonPatchDocument<UpdateMovieDto> patchDocument)
+	                                JsonPatchDocument<UpdateMovieDto>
+		                                patchDocument)
 	{
 		var movie = _moviesContext.Movies.FirstOrDefault(m => m.Id == id);
 
@@ -111,10 +119,10 @@ public class MoviesController : ControllerBase
 		{
 			return NotFound();
 		}
-		
+
 		_moviesContext.Movies.Remove(movie);
 		_moviesContext.SaveChanges();
-		
+
 		return NoContent();
 	}
 }
