@@ -23,6 +23,7 @@ public class MoviesController : ControllerBase
 	}
 
 	[HttpGet]
+	[ProducesResponseType(StatusCodes.Status200OK)]
 	public IActionResult
 		GetMovies([FromQuery] uint skip = 0, [FromQuery] uint take = 50)
 	{
@@ -37,6 +38,8 @@ public class MoviesController : ControllerBase
 	}
 
 	[HttpGet("{id}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public IActionResult GetById(uint id)
 	{
 		var movie = _moviesContext.Movies.FirstOrDefault(m => m.Id == id);
@@ -52,6 +55,8 @@ public class MoviesController : ControllerBase
 	}
 
 	[HttpPost]
+	[ProducesResponseType(StatusCodes.Status201Created)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	public IActionResult AddMovie([FromBody] CreateMovieDto dto)
 	{
 		var movie = _mapper.Map<Movie>(dto);
@@ -68,6 +73,8 @@ public class MoviesController : ControllerBase
 	}
 
 	[HttpPut("{id}")]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public IActionResult UpdateMovie(uint id,
 	                                 [FromBody] UpdateMovieDto newDto)
 	{
@@ -85,6 +92,8 @@ public class MoviesController : ControllerBase
 	}
 
 	[HttpPatch("{id}")]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public IActionResult PatchMovie(uint id,
 	                                JsonPatchDocument<UpdateMovieDto>
 		                                patchDocument)
@@ -111,6 +120,8 @@ public class MoviesController : ControllerBase
 	}
 
 	[HttpDelete("{id}")]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public IActionResult DeleteMovie(uint id)
 	{
 		var movie = _moviesContext.Movies.FirstOrDefault(m => m.Id == id);
